@@ -3,13 +3,20 @@
 
 set(CMAKE_CXX_STANDARD 20)
 
-include_directories(${LIBBPF_INCLUDE_DIRS})
-link_directories(${LIBBPF_LIBRARIES})
+Include(FetchContent)
+
+FetchContent_Declare(
+  yaml-cpp
+  GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+  GIT_TAG        0.8.0 # or a later release
+)
+
+FetchContent_MakeAvailable(yaml-cpp)
+
+find_library(LIBBPF libbpf)
 
 include(CheckSymbolExists)
 
-set(CMAKE_REQUIRED_INCLUDES ${LIBBPF_INCLUDE_DIRS})
-set(CMAKE_REQUIRED_LIBRARIES ${LIBBPF_LIBRARIES})
 check_symbol_exists(bpf_prog_load "bpf/bpf.h" HAS_BPF_PROG_LOAD)
 
 if(NOT HAS_BPF_PROG_LOAD)
@@ -17,11 +24,11 @@ if(NOT HAS_BPF_PROG_LOAD)
 endif()
 
 add_executable(
-  bpf_load
+  bpf_performance_runner
   runner.cc
 )
 
-target_link_libraries(libbpf_plugin PRIVATE ${LIBBPF_LIBRARIES})
+target_link_libraries(bpf_performance_runner PRIVATE "bpf" "yaml-cpp")
 
 
 
