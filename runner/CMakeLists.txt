@@ -13,19 +13,6 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(yaml-cpp)
 
-if (PLATFORM_WINDOWS)
-  find_program(NUGET nuget)
-  if(NOT NUGET)
-    message("ERROR: You must first install nuget.exe from https://www.nuget.org/downloads")
-  else()
-    exec_program(${NUGET} ARGS install "eBPF-for-Windows" -Version 0.10.0 -ExcludeVersion -OutputDirectory ${PROJECT_BINARY_DIR}/packages)
-  endif()
-  set(EBPF_LIB "ebpfapi")
-elseif(PLATFORM_LINUX)
-  find_library(LIBBPF libbpf)
-  set(EBPF_LIB "bpf")
-endif()
-
 include(CheckSymbolExists)
 
 check_symbol_exists(bpf_prog_load "bpf/bpf.h" HAS_BPF_PROG_LOAD)
@@ -39,6 +26,8 @@ add_executable(
   runner.cc
 )
 
+target_include_directories(bpf_performance_runner PRIVATE ${EBPF_INC_PATH})
+target_link_directories(bpf_performance_runner PRIVATE ${EBPF_LIB_PATH})
 target_link_libraries(bpf_performance_runner PRIVATE ${EBPF_LIB} "yaml-cpp")
 
 

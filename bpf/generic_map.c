@@ -1,9 +1,7 @@
 // Copyright (c) Microsoft Corporation
 // SPDX-License-Identifier: MIT
 
-#include <linux/bpf.h>
-#include <linux/types.h>
-#include <bpf/bpf_helpers.h>
+#include "bpf.h"
 
 #define MAX_ENTRIES 1024
 
