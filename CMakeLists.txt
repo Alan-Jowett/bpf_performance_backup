@@ -14,5 +14,9 @@ include("cmake/platform.cmake")
 include("cmake/options.cmake")
 include("cmake/version.cmake")
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+
 add_subdirectory(runner)
 add_subdirectory(bpf)
