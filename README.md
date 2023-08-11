@@ -1,13 +1,13 @@
-[![CI/CD](https://github.com/Alan-Jowett/bpf_performance/actions/workflows/CICD.yml/badge.svg)](https://github.com/Alan-Jowett/bpf_performance/actions/workflows/CICD.yml)[![Coverage Status](https://coveralls.io/repos/github/Alan-Jowett/bpf_performance/badge.svg)](https://coveralls.io/github/Alan-Jowett/bpf_performance)
-
-
 # bpf_performance
-A set of platform agnostic to measure the performance of various BPF helper functions.
+
+[![CI/CD](https://github.com/Alan-Jowett/bpf_performance/actions/workflows/CICD.yml/badge.svg)](https://github.com/Alan-Jowett/bpf_performance/actions/workflows/CICD.yml)
+[![Coverage Status](https://coveralls.io/repos/github/Alan-Jowett/bpf_performance/badge.svg)](https://coveralls.io/github/Alan-Jowett/bpf_performance)
+
+A set of platform-agnostic tools to measure the performance of various BPF helper functions.
 
 ## Overview
-Tests are defined as BPF programs, with each program having a map_state_preparation phase and a test phase.
 
-Tests are then described in a yaml file.
+Tests are defined as BPF programs, each consisting of a `map_state_preparation` phase and a `test` phase. These tests are described in a YAML file.
 
 As an example:
 
@@ -42,34 +42,39 @@ tests:
       read_HASH: unassigned
 ```
 
-Test programs can be pinned to specific CPUs to permit mixed behavior tests (such as concurrent reads and updates to a map).
+Test programs can be pinned to specific CPUs to permit mixed behavior tests, such as concurrent reads and updates to a map.
 
 ## Building
+
+To build the project:
+
 ```shell
 cmake -B build -S .
 cmake --build build
 ```
 
-This builds on both Windows (using eBPF for Windows) and Linux.
+This build process works on both Windows (using eBPF for Windows) and Linux.
 
-For Linux, the following packages are required:
+For Linux, you need the following packages:
 1. gcc-multilib
 2. libbpf-dev
 3. Clang / llvm
 
-For Windows, the following tools are required:
+For Windows, you need the following tools:
 1. Nuget
 2. Clang / LLVM
 
 ## Running the tests
 
-Linux
+To run the tests on Linux:
+
 ```shell
 cd build/bin
 sudo ./bpf_performance_runner tests.yml
 ```
 
-Windows (after installing eBPF for Windows MSI)
+On Windows (after installing eBPF for Windows MSI):
+
 ```cmd
 cd build\bin\Debug
 .\bpf_performance_runner tests.yml
