@@ -128,10 +128,19 @@ main(int argc, char** argv)
                 }
 
                 // Run map_state_preparation program via bpf_prog_test_run_opts.
+                std::vector<uint8_t> data_in(1024);
+                std::vector<uint8_t> data_out(1024);
+                std::vector<uint8_t> context_in(4);
+                std::vector<uint8_t> context_out(4);
+
                 bpf_test_run_opts opts;
                 memset(&opts, 0, sizeof(opts));
                 opts.sz = sizeof(opts);
                 opts.repeat = prep_program_iterations;
+                opts.data_in = data_in.data();
+                opts.data_out = data_out.data();
+                opts.data_size_in = static_cast<uint32_t>(data_in.size());
+                opts.data_size_out = static_cast<uint32_t>(data_out.size());
 
                 if (bpf_prog_test_run_opts(bpf_program__fd(map_state_preparation_program), &opts)) {
                     throw std::runtime_error("Failed to run map_state_preparation program " + prep_program_name);
@@ -200,12 +209,23 @@ main(int argc, char** argv)
                 }
                 auto program = cpu_program_assignments[i].value();
                 auto& opt = opts[i];
-                memset(&opt, 0, sizeof(opt));
-                opt.sz = sizeof(opt);
-                opt.repeat = iteration_count;
-                opt.cpu = i;
 
-                threads.emplace_back([program, &opt](std::stop_token stop_token) {
+                threads.emplace_back([=, &opt](std::stop_token stop_token) {
+                    memset(&opt, 0, sizeof(opt));
+                    std::vector<uint8_t> data_in(1024);
+                    std::vector<uint8_t> data_out(1024);
+
+                    opt.sz = sizeof(opt);
+                    opt.repeat = iteration_count;
+                    opt.cpu = i;
+                    opt.data_in = data_in.data();
+                    opt.data_out = data_out.data();
+                    opt.data_size_in = static_cast<uint32_t>(data_in.size());
+                    opt.data_size_out = static_cast<uint32_t>(data_out.size());
+                    #if defined(HAS_BPF_TEST_RUN_OPTS_BATCH_SIZE)
+                    opt.batch_size = 64;
+                    #endif
+
                     int result = bpf_prog_test_run_opts(program, &opt);
                     if (result < 0) {
                         opt.retval = result;
@@ -219,7 +239,7 @@ main(int argc, char** argv)
             // Check if any program returned non-zero.
             for (auto& opt : opts) {
                 if (opt.retval != 0) {
-                    throw std::runtime_error("Program returned non-zero");
+                    throw std::runtime_error("Program returned non-zero "+ std::to_string(opt.retval) +" in test " + name);
                 }
             }
 

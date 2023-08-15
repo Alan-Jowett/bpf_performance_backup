@@ -45,7 +45,8 @@ prepare_rolling_lru_state(void* ctx)
     int key = 0;
     int* value = bpf_map_lookup_elem(&rolling_lru_map_init, &key);
     if (value && *value < MAX_ENTRIES) {
-        bpf_map_update_elem(&rolling_lru_map, value, value, BPF_ANY);
+        int i = *value;
+        bpf_map_update_elem(&rolling_lru_map, &i, &i, BPF_ANY);
         *value += 1;
     }
     return 0;

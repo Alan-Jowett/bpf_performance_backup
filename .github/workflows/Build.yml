@@ -45,6 +45,12 @@ jobs:
          libbpf-dev \
          lcov
 
+    - name: Install prerequisites - Windows-2019 or Windows-2022
+      if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
+      run: |
+        Invoke-WebRequest -Uri https://github.com/microsoft/ebpf-for-windows/releases/download/v0.10.0/ebpf-for-windows.0.10.0.msi -OutFile ebpf-for-windows.msi
+        Start-Process msiexec.exe -Wait -ArgumentList '/i ebpf-for-windows.msi /quiet /qn /norestart /log install.log ADDLOCAL=ALL'
+
     - name: Cache nuget packages
       if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
       uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8
@@ -79,11 +85,17 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-    - name: Tests
+    - name: Tests - Ubuntu-22.04
       if: inputs.platform == 'ubuntu-22.04'
       working-directory: ${{github.workspace}}/build/bin
       run: |
         sudo ./bpf_performance_runner tests.yml
+
+    - name: Tests - Windows 2019 or Windows 2022
+      if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
+      working-directory: ${{github.workspace}}/build/bin
+      run: |
+        ${{env.BUILD_TYPE}}\bpf_performance_runner.exe tests.yml Baseline
 
     - name: Self-Tests
       if: inputs.platform == 'ubuntu-22.04'
