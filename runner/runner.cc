@@ -55,6 +55,7 @@ main(int argc, char** argv)
 
         YAML::Node config = YAML::LoadFile(argv[1]);
         auto tests = config["tests"];
+        std::map<std::string, bpf_object_ptr> bpf_objects;
 
         // Query libbpf for cpu count.
         int cpu_count = libbpf_num_possible_cpus();
@@ -64,7 +65,7 @@ main(int argc, char** argv)
             throw std::runtime_error("Invalid config file - tests must be a sequence");
         }
 
-        // Run each test.
+        // First load all the BPF programs.
         for (auto test : tests) {
             // Check for required fields.
             if (!test["name"].IsDefined()) {
@@ -89,15 +90,15 @@ main(int argc, char** argv)
 
             std::string name = test["name"].as<std::string>();
             std::string elf_file = test["elf_file"].as<std::string>();
-            int iteration_count = test["iteration_count"].as<int>();
-
             // Skip if test name is specified and doesn't match, with test name being a regex.
             if (test_name && !std::regex_match(name, std::regex(*test_name))) {
                 continue;
             }
 
-            // Vector of CPU -> program fd.
-            std::vector<std::optional<int>> cpu_program_assignments(cpu_count);
+            if (bpf_objects.find(elf_file) != bpf_objects.end()) {
+                // Already loaded.
+                continue;
+            }
 
             bpf_object_ptr obj;
             obj.reset(bpf_object__open(elf_file.c_str()));
@@ -107,6 +108,21 @@ main(int argc, char** argv)
             if (bpf_object__load(obj.get()) < 0) {
                 throw std::runtime_error("Failed to load BPF object " + elf_file + ": " + strerror(errno));
             }
+
+            // Insert into bpf_objects
+            bpf_objects.insert({elf_file, std::move(obj)});
+        }
+
+        // Run each test.
+        for (auto test : tests) {
+            std::string name = test["name"].as<std::string>();
+            std::string elf_file = test["elf_file"].as<std::string>();
+            int iteration_count = test["iteration_count"].as<int>();
+
+            // Vector of CPU -> program fd.
+            std::vector<std::optional<int>> cpu_program_assignments(cpu_count);
+
+            bpf_object_ptr& obj = bpf_objects[elf_file];
 
             // Check if node map_state_preparation exits.
             auto map_state_preparation = test["map_state_preparation"];

@@ -96,7 +96,7 @@ jobs:
       working-directory: ${{github.workspace}}/build/bin
       shell: cmd
       run: |
-        ${{env.BUILD_TYPE}}\bpf_performance_runner.exe tests.yml Baseline 2>&1 | tee Baseline.log
+        ${{env.BUILD_TYPE}}\bpf_performance_runner.exe tests_native.yml
 
     - name: Self-Tests
       if: inputs.platform == 'ubuntu-22.04'
