@@ -97,7 +97,7 @@ jobs:
       working-directory: ${{github.workspace}}/build/bin
       shell: cmd
       run: |
-        Test-Path -Path ebpfapi.dll
+        where ebpfapi.dll
         ${{env.BUILD_TYPE}}\bpf_performance_runner.exe tests_native.yml
 
     - name: Self-Tests
