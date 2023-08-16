@@ -45,13 +45,6 @@ jobs:
          libbpf-dev \
          lcov
 
-    - name: Install prerequisites - Windows-2019 or Windows-2022
-      if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
-      run: |
-        Invoke-WebRequest -Uri https://github.com/microsoft/ebpf-for-windows/releases/download/v0.10.0/ebpf-for-windows.0.10.0.msi -OutFile ebpf-for-windows.msi
-        Start-Process msiexec.exe -Wait -ArgumentList '/i ebpf-for-windows.msi /quiet /qn /norestart /log install.log ADDLOCAL=ALL'
-        echo "C:\Program Files\ebpf-for-windows" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-
     - name: Cache nuget packages
       if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
       uses: actions/cache@88522ab9f39a2ea568f7027eddc7d8d8bc9d59c8
@@ -97,6 +90,13 @@ jobs:
       working-directory: ${{github.workspace}}/build/bin
       run: |
         sudo ./bpf_performance_runner tests.yml
+
+    - name: Install prerequisites - Windows-2019 or Windows-2022
+      if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
+      run: |
+        Invoke-WebRequest -Uri https://github.com/microsoft/ebpf-for-windows/releases/download/v0.10.0/ebpf-for-windows.0.10.0.msi -OutFile ebpf-for-windows.msi
+        Start-Process msiexec.exe -Wait -ArgumentList '/i ebpf-for-windows.msi /quiet /qn /norestart /log install.log ADDLOCAL=ALL'
+        echo "C:\Program Files\ebpf-for-windows" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
     - name: Tests - Windows 2019 or Windows 2022
       if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
