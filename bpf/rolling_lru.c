@@ -39,7 +39,7 @@ struct
 } lru_key_base SEC(".maps");
 
 // Populate the LRU map with keys in the range [lru_key_base, lru_key_base + lru_key_range).
-__attribute__((section("xdp"))) int
+__attribute__((section("xdp/prepare_rolling_lru_state"))) int
 prepare_rolling_lru_state(void* ctx)
 {
     int key = 0;
@@ -56,7 +56,7 @@ prepare_rolling_lru_state(void* ctx)
 // If found in the map, update the value to 0.
 // If not found in the map, add the key to the map with value 0.
 // Increment lru_key_base by 1 on every 10th iteration on CPU 0.
-__attribute__((section("xdp"))) int
+__attribute__((section("xdp/read_or_update_rolling_lru"))) int
 read_or_update_rolling_lru(void* ctx)
 {
     int key = bpf_get_prandom_u32() % KEY_RANGE;
