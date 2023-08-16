@@ -8,16 +8,16 @@
 struct
 {
     __uint(type, BPF_MAP_TYPE_HASH);
-    __type(key, uint32_t);
-    __type(value, uint32_t);
+    __type(key, unsigned int);
+    __type(value, unsigned int);
     __uint(max_entries, MAX_ENTRIES);
 } inner_map SEC(".maps");
 
 struct
 {
     __uint(type, BPF_MAP_TYPE_ARRAY_OF_MAPS);
-    __type(key, uint32_t);
-    __type(value, uint32_t);
+    __type(key, unsigned int);
+    __type(value, unsigned int);
     __uint(max_entries, 1);
     __array(values, inner_map);
 } outer_map SEC(".maps") = {
@@ -27,8 +27,8 @@ struct
 struct
 {
     __uint(type, BPF_MAP_TYPE_ARRAY);
-    __type(key, uint32_t);
-    __type(value, uint32_t);
+    __type(key, unsigned int);
+    __type(value, unsigned int);
     __uint(max_entries, 1);
 } outer_map_init SEC(".maps");
 
