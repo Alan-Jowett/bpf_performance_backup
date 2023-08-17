@@ -5,7 +5,7 @@ tests:
   - name: Baseline
     description: The Baseline test with an empty eBPF program.
     elf_file: baseline.o
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       baseline_program: all
 
@@ -15,7 +15,7 @@ tests:
     map_state_preparation:
       program: prepare_HASH_state_generic_read
       iteration_count: 1024
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       read_HASH: all
 
@@ -25,7 +25,7 @@ tests:
     map_state_preparation:
       program: prepare_HASH_state_generic_read
       iteration_count: 1024
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       update_HASH: all
 
@@ -35,7 +35,7 @@ tests:
     map_state_preparation:
       program: prepare_HASH_state_generic_read
       iteration_count: 1024
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       update_HASH: [0]
       read_HASH: unassigned
@@ -46,7 +46,7 @@ tests:
     map_state_preparation:
       program: prepare_PERCPU_HASH_state_generic_read
       iteration_count: 1024
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       read_PERCPU_HASH: all
 
@@ -56,7 +56,7 @@ tests:
     map_state_preparation:
       program: prepare_PERCPU_HASH_state_generic_read
       iteration_count: 1024
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       update_PERCPU_HASH: all
 
@@ -66,7 +66,7 @@ tests:
     map_state_preparation:
       program: prepare_PERCPU_HASH_state_generic_read
       iteration_count: 1024
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       update_PERCPU_HASH: [0]
       read_PERCPU_HASH: unassigned
@@ -77,7 +77,7 @@ tests:
     map_state_preparation:
       program: prepare_ARRAY_state_generic_read
       iteration_count: 1024
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       read_ARRAY: all
 
@@ -87,7 +87,7 @@ tests:
     map_state_preparation:
       program: prepare_ARRAY_state_generic_read
       iteration_count: 1024
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       update_ARRAY: all
 
@@ -97,7 +97,7 @@ tests:
     map_state_preparation:
       program: prepare_PERCPU_ARRAY_state_generic_read
       iteration_count: 1024
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       read_PERCPU_ARRAY: all
 
@@ -107,7 +107,7 @@ tests:
     map_state_preparation:
       program: prepare_PERCPU_ARRAY_state_generic_read
       iteration_count: 1024
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       update_PERCPU_ARRAY: all
 
@@ -118,7 +118,7 @@ tests:
     map_state_preparation:
       program: prepare_LRU_HASH_state_generic_read
       iteration_count: 1024
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       read_LRU_HASH: all
 
@@ -128,7 +128,7 @@ tests:
     map_state_preparation:
       program: prepare_LRU_HASH_state_generic_read
       iteration_count: 1024
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       update_LRU_HASH: all
 
@@ -138,14 +138,14 @@ tests:
     map_state_preparation:
       program: prepare_rolling_lru_state
       iteration_count: 8192
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       read_or_update_rolling_lru: all
 
   - name: bpf_get_prandom_u32
     description: Tests the bpf_get_prandom_u32 helper.
     elf_file: helpers.o
-    iteration_count: 10000000
+    iteration_count: 100000000
     program_cpu_assignment:
       test_bpf_get_prandom_u32: all
 
