@@ -46,6 +46,8 @@ jobs:
          lcov
 
     - name: Download daily nuget package and MSI
+      env:
+        GH_TOKEN: ${{ github.token }}
       if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
       run: |
         mkdir ${{github.workspace}}/local_packages
