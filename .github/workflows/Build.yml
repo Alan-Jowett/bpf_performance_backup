@@ -52,7 +52,7 @@ jobs:
         git clone https://github.com/libbpf/libbpf.git
         cd libbpf
         git checkout v1.0.0
-        cd libbpf/src
+        cd src
         make
         sudo LIBDIR=/lib/x86_64-linux-gnu make install
         sudo ldconfig
