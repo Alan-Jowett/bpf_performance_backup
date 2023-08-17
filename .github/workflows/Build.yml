@@ -51,7 +51,7 @@ jobs:
       run: |
         git clone https://github.com/libbpf/libbpf.git
         cd libbpf
-        git checkout v1.0.0
+        git checkout v0.7.0
         cd src
         make
         sudo LIBDIR=/lib/x86_64-linux-gnu make install
