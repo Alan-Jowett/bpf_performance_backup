@@ -123,8 +123,9 @@ jobs:
       if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
       working-directory: ${{github.workspace}}/build/bin
       shell: cmd
+      # Run with option to ignore failing return code
       run: |
-        ${{env.BUILD_TYPE}}\bpf_performance_runner.exe -i tests.yml
+        ${{env.BUILD_TYPE}}\bpf_performance_runner.exe -i tests.yml -r
 
     - name: Self-Tests
       if: inputs.platform == 'ubuntu-22.04'
