@@ -45,7 +45,7 @@ const std::string runner_platform = "Windows";
 //     - <program name>: the name of the program
 //       - <cpu number>: the CPU number to run the program on
 //       - all: run the program on all CPUs
-//       - unassigned: run the program on all unassigned CPUs
+//       - remaining: run the program on all remaining CPUs
 int
 main(int argc, char** argv)
 {
