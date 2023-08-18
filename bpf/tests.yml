@@ -194,8 +194,6 @@ tests:
 
   - name: bpf_xdp_adjust_head_plus_100
     description: Tests the bpf_xdp_adjust_head helper with a positive offset.
-    # Test fails on Linux, need to investigate.
-    platform: Windows
     program_type: xdp
     elf_file: xdp.o
     iteration_count: 10000000
@@ -204,12 +202,9 @@ tests:
 
   - name: bpf_xdp_adjust_head_minus_100
     description: Tests the bpf_xdp_adjust_head helper with a negative offset.
-    # Test fails on Linux, need to investigate.
-    platform: Windows
     program_type: xdp
     elf_file: xdp.o
-    # Set iteration count to 10k to due to the test taking a long time to run.
-    iteration_count: 10000
+    iteration_count: 10000000
     program_cpu_assignment:
       test_bpf_xdp_adjust_head_minus_100: all
 
