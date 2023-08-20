@@ -104,7 +104,7 @@ jobs:
       if: inputs.platform == 'ubuntu-22.04'
       working-directory: ${{github.workspace}}/build/bin
       run: |
-        sudo ./bpf_performance_runner -i tests.yml | tee ${{github.workspace}}/results/jit-${inputs.platform}-${{env.BUILD_TYPE}}.csv
+        sudo ./bpf_performance_runner -i tests.yml | tee ${{github.workspace}}/results/jit-${{inputs.platform}}-${{env.BUILD_TYPE}}.csv
 
     - name: Install prerequisites - Windows-2019 or Windows-2022
       if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
