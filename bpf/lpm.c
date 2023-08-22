@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT
 
 #include "bpf.h"
-#include "bpf_endian.h"
 #include "lpm.h"
 
 #define MAX_ENTRIES 8192
@@ -20,6 +19,7 @@ struct
     __uint(max_entries, MAX_ENTRIES);
     __type(key, ipv4_route);
     __type(value, int);
+    __uint(map_flags, BPF_F_NO_PREALLOC);
 } lpm_map SEC(".maps");
 
 struct
@@ -73,17 +73,18 @@ SEC("xdp/prepare_lpm_state") int prepare_lpm_state(void* ctx)
     new_route.address = bpf_get_prandom_u32() & prefix_length_to_network_mask(new_route.prefix_length);
 
     // Convert to network byte order
-    new_route.address = htonl(new_route.address);
+    new_route.address = bpf_htonl(new_route.address);
 
     // Insert into lpm_map
     if (bpf_map_update_elem(&lpm_map, &new_route, &index, BPF_ANY) < 0) {
-        bpf_printk("Failed to insert into lpm_map %x:%x\n", ntohl(new_route.address), new_route.prefix_length);
+        bpf_printk("Failed to insert into lpm_map %x:%x\n", bpf_ntohl(new_route.address), new_route.prefix_length);
         return 1;
     }
 
     // Insert into lpm_routes_map
     if (bpf_map_update_elem(&lpm_routes_map, &index, &new_route, BPF_ANY) < 0) {
-        bpf_printk("Failed to insert into lpm_routes_map  %x:%x\n", ntohl(new_route.address), new_route.prefix_length);
+        bpf_printk(
+            "Failed to insert into lpm_routes_map  %x:%x\n", bpf_ntohl(new_route.address), new_route.prefix_length);
         return 1;
     }
 
@@ -107,17 +108,17 @@ SEC("xdp/read_lpm") int read_lpm(void* ctx)
 
     // Compose a random address that is within the route's prefix length.
     test_address.address = prefix_length_to_host_mask(test_route->prefix_length) & bpf_get_prandom_u32();
-    test_address.address |= ntohl(test_route->address);
+    test_address.address |= bpf_ntohl(test_route->address);
 
     // Convert to network byte order
-    test_address.address = htonl(test_address.address);
+    test_address.address = bpf_htonl(test_address.address);
 
     // Lookup the route in the lpm_map
     unsigned int* result = bpf_map_lookup_elem(&lpm_map, &test_address);
     if (!result) {
         bpf_printk(
-            "Failed to lookup route in lpm_map %x:%x\n", ntohl(test_address.address), test_address.prefix_length);
-        bpf_printk("Built from route %x:%x\n", ntohl(test_route->address), test_route->prefix_length);
+            "Failed to lookup route in lpm_map %x:%x\n", bpf_ntohl(test_address.address), test_address.prefix_length);
+        bpf_printk("Built from route %x:%x\n", bpf_ntohl(test_route->address), test_route->prefix_length);
         return 1;
     }
 
@@ -132,11 +133,11 @@ SEC("xdp/read_lpm") int read_lpm(void* ctx)
     // Compare the test_address with the result_route
     // Note: The matched route may be a more specific route than the test route.
     unsigned int test_address_network =
-        ntohl(test_address.address) & prefix_length_to_network_mask(result_route->prefix_length);
-    if (test_address_network != ntohl(result_route->address)) {
-        bpf_printk("Failed to match route %x:%x\n", ntohl(test_address.address), test_address.prefix_length);
-        bpf_printk("Built from route %x:%x\n", ntohl(test_route->address), test_route->prefix_length);
-        bpf_printk("Result route %x:%x\n", ntohl(result_route->address), result_route->prefix_length);
+        bpf_ntohl(test_address.address) & prefix_length_to_network_mask(result_route->prefix_length);
+    if (test_address_network != bpf_ntohl(result_route->address)) {
+        bpf_printk("Failed to match route %x:%x\n", bpf_ntohl(test_address.address), test_address.prefix_length);
+        bpf_printk("Built from route %x:%x\n", bpf_ntohl(test_route->address), test_route->prefix_length);
+        bpf_printk("Result route %x:%x\n", bpf_ntohl(result_route->address), result_route->prefix_length);
         return 1;
     }
 
