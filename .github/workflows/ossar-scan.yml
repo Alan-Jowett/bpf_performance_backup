@@ -25,11 +25,6 @@ jobs:
   scan:
     timeout-minutes: 30
 
-    strategy:
-      matrix:
-        # For now only run on release as debug builds of the MSVC are built without /Qspectre.
-        configurations: [RelWithDebInfo]
-
     # github/ossar-action doesn't run on windows-2019, requires windows-latest.
     runs-on: ${{inputs.platform}}
 
@@ -45,13 +40,7 @@ jobs:
       id: download_artifact
       with:
         name: build-${{inputs.configuration}}-${{inputs.platform}}
-        path: ${{github.workspace}}
-
-    - name: Extract build artifact
-      working-directory: ${{github.workspace}}
-      run: |
-        mkdir build
-        Expand-Archive .\build-${{inputs.configuration}}-${{inputs.platform}}.zip -DestinationPath build
+        path: ${{github.workspace}}/build
 
     - name: Run OSSAR (Open Source Static Analysis Runner)
       uses: github/ossar-action@c757d32d66bea728bc64e67e7d6de9696f7f37d3
