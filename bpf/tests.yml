@@ -254,7 +254,7 @@ tests:
     description: Tests the BPF_MAP_TYPE_LPM_TRIE map type.
     elf_file: lpm_1024.o
     map_state_preparation:
-      program: prepare_1024
+      program: prepare
       iteration_count: 1024
     iteration_count: 10000000
     program_cpu_assignment:
@@ -264,7 +264,7 @@ tests:
     description: Tests the BPF_MAP_TYPE_LPM_TRIE map type.
     elf_file: lpm_1024.o
     map_state_preparation:
-      program: prepare_1024
+      program: prepare
       iteration_count: 1024
     iteration_count: 10000000
     program_cpu_assignment:
@@ -274,7 +274,7 @@ tests:
     description: Tests the BPF_MAP_TYPE_LPM_TRIE map type.
     elf_file: lpm_1024.o
     map_state_preparation:
-      program: prepare_1024
+      program: prepare
       iteration_count: 1024
     iteration_count: 10000000
     program_cpu_assignment:
@@ -284,7 +284,7 @@ tests:
     description: Tests the BPF_MAP_TYPE_LPM_TRIE map type.
     elf_file: lpm_16384.o
     map_state_preparation:
-      program: prepare_16384
+      program: prepare
       iteration_count: 16384
     iteration_count: 10000000
     program_cpu_assignment:
@@ -294,7 +294,7 @@ tests:
     description: Tests the BPF_MAP_TYPE_LPM_TRIE map type.
     elf_file: lpm_16384.o
     map_state_preparation:
-      program: prepare_16384
+      program: prepare
       iteration_count: 16384
     iteration_count: 10000000
     program_cpu_assignment:
@@ -304,7 +304,7 @@ tests:
     description: Tests the BPF_MAP_TYPE_LPM_TRIE map type.
     elf_file: lpm_16384.o
     map_state_preparation:
-      program: prepare_16384
+      program: prepare
       iteration_count: 16384
     iteration_count: 10000000
     program_cpu_assignment:
@@ -314,7 +314,7 @@ tests:
     description: Tests the BPF_MAP_TYPE_LPM_TRIE map type.
     elf_file: lpm_262144.o
     map_state_preparation:
-      program: prepare_262144
+      program: prepare
       iteration_count: 262144
     iteration_count: 10000000
     program_cpu_assignment:
@@ -324,7 +324,7 @@ tests:
     description: Tests the BPF_MAP_TYPE_LPM_TRIE map type.
     elf_file: lpm_262144.o
     map_state_preparation:
-      program: prepare_262144
+      program: prepare
       iteration_count: 262144
     iteration_count: 10000000
     program_cpu_assignment:
@@ -334,7 +334,7 @@ tests:
     description: Tests the BPF_MAP_TYPE_LPM_TRIE map type.
     elf_file: lpm_262144.o
     map_state_preparation:
-      program: prepare_262144
+      program: prepare
       iteration_count: 262144
     iteration_count: 10000000
     program_cpu_assignment:
@@ -344,7 +344,7 @@ tests:
     description: Tests the BPF_MAP_TYPE_LPM_TRIE map type.
     elf_file: lpm_1048576.o
     map_state_preparation:
-      program: prepare_1048576
+      program: prepare
       iteration_count: 1048576
     iteration_count: 10000000
     program_cpu_assignment:
@@ -354,7 +354,7 @@ tests:
     description: Tests the BPF_MAP_TYPE_LPM_TRIE map type.
     elf_file: lpm_1048576.o
     map_state_preparation:
-      program: prepare_1048576
+      program: prepare
       iteration_count: 1048576
     iteration_count: 10000000
     program_cpu_assignment:
@@ -364,7 +364,7 @@ tests:
     description: Tests the BPF_MAP_TYPE_LPM_TRIE map type.
     elf_file: lpm_1048576.o
     map_state_preparation:
-      program: prepare_1048576
+      program: prepare
       iteration_count: 1048576
     iteration_count: 10000000
     program_cpu_assignment:
