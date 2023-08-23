@@ -17,6 +17,7 @@ on:
 permissions:
   contents: read
   packages: write
+  security-events: write # Required by codeql task
 
 concurrency:
   # Cancel any CI/CD workflow currently in progress for the same PR.
@@ -32,6 +33,7 @@ jobs:
       configuration: RelWithDebInfo
       enable_sanitizers: false
       enable_coverage: false
+      ossar_scan: true
 
   windows_debug:
     uses: ./.github/workflows/Build.yml
@@ -48,6 +50,7 @@ jobs:
       configuration: RelWithDebInfo
       enable_sanitizers: false
       enable_coverage: false
+      ossar_scan: true
 
   windows_debug_2022:
     uses: ./.github/workflows/Build.yml
