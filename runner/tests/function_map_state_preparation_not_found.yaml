@@ -10,4 +10,4 @@ tests:
       iteration_count: 1024
     iteration_count: 10000000
     program_cpu_assignment:
-      read_HASH: all
+      read: all
