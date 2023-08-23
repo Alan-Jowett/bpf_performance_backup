@@ -1,0 +1,64 @@
+# Copyright (c) Microsoft Corporation
+# SPDX-License-Identifier: MIT
+
+# This workflow executes the OSSAR action.
+
+name: ossar-scan
+
+on:
+  workflow_call:
+    inputs:
+      # The name of the build artifact to download.
+      platform:
+        required: true
+        type: string      
+      configuration:
+        required: true
+        type: string
+
+permissions:
+  checks: read  # Required by fountainhead/action-wait-for-check to wait for another GitHub check to complete.
+  contents: read  # Required by actions/checkout to fetch code.
+  security-events: write # Required by codeql task
+
+jobs:
+  scan:
+    timeout-minutes: 30
+
+    strategy:
+      matrix:
+        # For now only run on release as debug builds of the MSVC are built without /Qspectre.
+        configurations: [RelWithDebInfo]
+
+    # github/ossar-action doesn't run on windows-2019, requires windows-latest.
+    runs-on: ${{inputs.platform}}
+
+    steps:
+    # Checking out the branch is needed to correctly log security alerts.
+    - uses: actions/checkout@c85c95e3d7251135ab7dc9ce3241c5835cc595a9
+      with:
+        # Only check out main repo, not submodules.
+        ref: ${{ github.event.workflow_run.head_branch }}
+
+    - name: Download build artifact
+      uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a
+      id: download_artifact
+      with:
+        name: build-${{inputs.configuration}}-${{inputs.platform}}
+        path: ${{github.workspace}}
+
+    - name: Extract build artifact
+      working-directory: ${{github.workspace}}
+      run: |
+        mkdir build
+        Expand-Archive .\build-${{inputs.configuration}}-${{inputs.platform}}.zip -DestinationPath build
+
+    - name: Run OSSAR (Open Source Static Analysis Runner)
+      uses: github/ossar-action@c757d32d66bea728bc64e67e7d6de9696f7f37d3
+      id: ossar
+
+    - name: Upload results to Security tab
+      if: steps.skip_check.outputs.should_skip != 'true'
+      uses: github/codeql-action/upload-sarif@cdcdbb579706841c47f7063dda365e292e5cad7a
+      with:
+        sarif_file: ${{ steps.ossar.outputs.sarifFile }}
