@@ -120,12 +120,3 @@ jobs:
       with:
         github-token: ${{ secrets.github_token }}
         parallel-finished: true
-
-  ossar:
-    needs:
-      - windows_release_2022
-      - windows_debug_2022
-    uses: ./.github/workflows/ossar-scan.yml
-    with:
-      platform: windows-2022
-      configuration: RelWithDebInfo
