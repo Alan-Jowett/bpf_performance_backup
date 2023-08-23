@@ -201,7 +201,7 @@ tests:
 
   - name: BPF_MAP_TYPE_LRU_PERCPU_HASH read
     description: Tests the BPF_MAP_TYPE_LRU_PERCPU_HASH map type.
-    elf_file: lru_percpu_hash.o
+    elf_file: lru_per_cpu_hash.o
     map_state_preparation:
       program: prepare
       iteration_count: 1024
@@ -211,7 +211,7 @@ tests:
 
   - name: BPF_MAP_TYPE_LRU_PERCPU_HASH update
     description: Tests the BPF_MAP_TYPE_LRU_PERCPU_HASH map type.
-    elf_file: lru_percpu_hash.o
+    elf_file: lru_per_cpu_hash.o
     map_state_preparation:
       program: prepare
       iteration_count: 1024
@@ -221,7 +221,7 @@ tests:
 
   - name: BPF_MAP_TYPE_LRU_PERCPU_HASH update/read
     description: Tests the BPF_MAP_TYPE_LRU_PERCPU_HASH map type.
-    elf_file: lru_percpu_hash.o
+    elf_file: lru_per_cpu_hash.o
     map_state_preparation:
       program: prepare
       iteration_count: 1024
@@ -232,7 +232,7 @@ tests:
 
   - name: BPF_MAP_TYPE_LRU_PERCPU_HASH replace
     description: Tests the BPF_MAP_TYPE_LRU_PERCPU_HASH map type.
-    elf_file: lru_percpu_hash.o
+    elf_file: lru_per_cpu_hash.o
     map_state_preparation:
       program: prepare
       iteration_count: 1024
