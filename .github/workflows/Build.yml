@@ -57,22 +57,29 @@ jobs:
         sudo LIBDIR=/lib/x86_64-linux-gnu make install
         sudo ldconfig
 
+    - name: Get the latest run ID from Microsoft/ebpf-for-windows main branch - Windows-2019 or Windows-2022
+      if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
+      run: |
+        mkdir ${{github.workspace}}/local_packages
+        Set-Content -Path .\local_packages\runid.txt -Value ((Invoke-WebRequest -Uri  "https://api.github.com/repos/microsoft/ebpf-for-windows/actions/runs?per_page=1&exclude_pull_requests=true&branch=main&status=completed&event=schedule").Content | ConvertFrom-Json).workflow_runs[0].id
+
     - name: Cache downloaded artifacts
+      if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
       uses: actions/cache@v2
       with:
         path: ${{github.workspace}}/local_packages
-        key: ${{runner.os}}-local_packages-${{hashFiles('${{github.workspace}}/local_packages/runid.txt')}}
+        key: ebpf-for-windows-run-id-${{hashFiles('${{github.workspace}}/local_packages/runid.txt')}}
 
     - name: Download daily nuget package and MSI installer - Windows-2019 or Windows-2022
       env:
         GH_TOKEN: ${{ github.token }}
       if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
       run: |
-        mkdir ${{github.workspace}}/local_packages
         $artifacts = @()
         $artifacts += 'ebpf-for-windows - NuGet package (Build-x64_Release)'
         $artifacts += 'ebpf-for-windows - MSI installer (Build-x64_Release)'
-        scripts\Fetch-LatestArtifacts.ps1 -ArtifactsToDownload $artifacts -OutputPath ${{github.workspace}}/local_packages
+        $runId = (Get-Content -Path .\local_packages\runid.txt)
+        scripts\Fetch-LatestArtifacts.ps1 -ArtifactsToDownload $artifacts -OutputPath ${{github.workspace}}/local_packages -RunId $runId
 
     - name: Configure CMake - Windows-2019 or Windows-2022
       if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
