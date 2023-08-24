@@ -62,7 +62,7 @@ jobs:
       run: |
         mkdir ${{github.workspace}}/local_packages
         $runId = ((Invoke-WebRequest -Uri  "https://api.github.com/repos/microsoft/ebpf-for-windows/actions/runs?per_page=1&exclude_pull_requests=true&branch=main&status=completed&event=schedule").Content | ConvertFrom-Json).workflow_runs[0].id
-        echo "{RUNID}={$runId}" >> "$GITHUB_ENV"
+        echo "RUNID=$runId" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
     - name: Cache downloaded artifacts
       if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
