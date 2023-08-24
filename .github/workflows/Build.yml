@@ -69,8 +69,10 @@ jobs:
       if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
       run: |
         mkdir ${{github.workspace}}/local_packages
-        scripts\Fetch-LatestArtifacts.ps1 -ArtifactName 'ebpf-for-windows - NuGet package (Build-x64_Release)' -OutputPath ${{github.workspace}}/local_packages
-        scripts\Fetch-LatestArtifacts.ps1 -ArtifactName 'ebpf-for-windows - MSI installer (Build-x64_Release)' -OutputPath ${{github.workspace}}/local_packages
+        $artifacts = @()
+        $artifacts += 'ebpf-for-windows - NuGet package (Build-x64_Release)'
+        $artifacts += 'ebpf-for-windows - MSI installer (Build-x64_Release)'
+        scripts\Fetch-LatestArtifacts.ps1 -ArtifactsToDownload $artifacts -OutputPath ${{github.workspace}}/local_packages
 
     - name: Configure CMake - Windows-2019 or Windows-2022
       if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
