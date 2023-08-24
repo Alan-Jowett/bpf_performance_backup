@@ -14,9 +14,6 @@ include("cmake/platform.cmake")
 include("cmake/options.cmake")
 include("cmake/version.cmake")
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 if (PLATFORM_WINDOWS)
   find_program(NUGET nuget)
@@ -63,7 +60,7 @@ add_subdirectory(bpf)
 enable_testing()
 
 # Specify the directory you want to create
-set(tests_directory "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests")
+set(tests_directory "${PROJECT_BINARY_DIR}/tests")
 
 # Check if the directory exists
 if(NOT EXISTS ${tests_directory})

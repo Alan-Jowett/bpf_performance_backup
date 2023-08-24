@@ -1,6 +1,10 @@
 # Copyright (c) Microsoft Corporation
 # SPDX-License-Identifier: MIT
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+
 # Each test consists of a C file, an output file name, and an optional option, seperated by commas.
 set(test_cases
     "baseline"
