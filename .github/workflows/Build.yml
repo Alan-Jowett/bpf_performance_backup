@@ -57,6 +57,12 @@ jobs:
         sudo LIBDIR=/lib/x86_64-linux-gnu make install
         sudo ldconfig
 
+    - name: Cache downloaded artifacts
+      uses: actions/cache@v2
+      with:
+        path: ${{github.workspace}}/local_packages
+        key: ${{runner.os}}-local_packages-${{hashFiles('${{github.workspace}}/local_packages/runid.txt')}}
+
     - name: Download daily nuget package and MSI installer - Windows-2019 or Windows-2022
       env:
         GH_TOKEN: ${{ github.token }}
