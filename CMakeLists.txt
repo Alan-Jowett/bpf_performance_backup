@@ -68,13 +68,6 @@ if(NOT EXISTS ${tests_directory})
     file(MAKE_DIRECTORY ${tests_directory})
 endif()
 
-
-#file(COPY ${CMAKE_SOURCE_DIR}/runner/tests DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-file(GLOB TESTS RELATIVE ${CMAKE_SOURCE_DIR}/runner/tests ${CMAKE_SOURCE_DIR}/runner/tests/*)
-foreach(test ${TESTS})
-  configure_file(${CMAKE_SOURCE_DIR}/runner/tests/${test} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests/${test} COPYONLY)
-endforeach()
-
 # Add test for usage message
 add_test(
   NAME usage
@@ -87,10 +80,12 @@ set_tests_properties(
   PASS_REGULAR_EXPRESSION "Usage: .*"
 )
 
+set(TEST_FILE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/runner/tests")
+
 # Test for empty yaml file
 add_test(
   NAME empty_yaml
-  COMMAND sudo bin/bpf_performance_runner -i bin/tests/empty.yaml
+  COMMAND sudo bin/bpf_performance_runner -i ${TEST_FILE_DIRECTORY}/empty.yaml
 )
 
 # Mark test as expected to fail with "Error: bad file: tests/empty.yaml"
