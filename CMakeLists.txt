@@ -97,19 +97,19 @@ set_tests_properties(
 # Test for missing yaml file
 add_test(
   NAME missing_yaml
-  COMMAND sudo bin/bpf_performance_runner -i bin/tests/missing.yaml
+  COMMAND sudo bin/bpf_performance_runner -i ${TEST_FILE_DIRECTORY}/missing.yaml
 )
 
 # Mark test as expected to fail with "Error: bad file: tests/missing.yaml"
 set_tests_properties(
   missing_yaml PROPERTIES
-  PASS_REGULAR_EXPRESSION "Error: bad file: bin/tests/missing.yaml"
+  PASS_REGULAR_EXPRESSION "Error: bad file: .*/missing.yaml"
 )
 
 # Test for missing "name" field
 add_test(
   NAME missing_name
-  COMMAND sudo bin/bpf_performance_runner -i bin/tests/missing_name.yaml
+  COMMAND sudo bin/bpf_performance_runner -i ${TEST_FILE_DIRECTORY}/missing_name.yaml
 )
 
 # Mark test as expected to fail with "Error: Field name is required"
@@ -121,7 +121,7 @@ set_tests_properties(
 # Test for missing "elf_file" field
 add_test(
   NAME missing_elf_file
-  COMMAND sudo bin/bpf_performance_runner -i bin/tests/missing_elf_file.yaml
+  COMMAND sudo bin/bpf_performance_runner -i ${TEST_FILE_DIRECTORY}/missing_elf_file.yaml
 )
 
 # Mark test as expected to fail with "Error: Field elf_file is required"
@@ -133,7 +133,7 @@ set_tests_properties(
 # Test for missing "iteration_count" field
 add_test(
   NAME missing_iteration_count
-  COMMAND sudo bin/bpf_performance_runner -i bin/tests/missing_iteration_count.yaml
+  COMMAND sudo bin/bpf_performance_runner -i ${TEST_FILE_DIRECTORY}/missing_iteration_count.yaml
 )
 
 # Mark test as expected to fail with "Error: Field iteration_count is required"
@@ -145,7 +145,7 @@ set_tests_properties(
 # Test for missing "program_cpu_assignment" field
 add_test(
   NAME missing_program_cpu_assignment
-  COMMAND sudo bin/bpf_performance_runner -i bin/tests/missing_program_cpu_assignment.yaml
+  COMMAND sudo bin/bpf_performance_runner -i ${TEST_FILE_DIRECTORY}/missing_program_cpu_assignment.yaml
 )
 
 # Mark test as expected to fail with "Error: Field program_cpu_assignment is required"
@@ -157,7 +157,7 @@ set_tests_properties(
 # Test for empty "program_cpu_assignment" field
 add_test(
   NAME empty_program_cpu_assignment
-  COMMAND sudo bin/bpf_performance_runner -i bin/tests/empty_program_cpu_assignment.yaml
+  COMMAND sudo bin/bpf_performance_runner -i ${TEST_FILE_DIRECTORY}/empty_program_cpu_assignment.yaml
 )
 
 # Mark test as expected to fail with "Error: Field program_cpu_assignment must be a map"
@@ -170,7 +170,7 @@ set_tests_properties(
 # # Test for elf file not found
 # add_test(
 #   NAME elf_file_not_found
-#   COMMAND sudo bin/bpf_performance_runner bin/tests/elf_file_not_found.yaml
+#   COMMAND sudo bin/bpf_performance_runner ${TEST_FILE_DIRECTORY}/elf_file_not_found.yaml
 # )
 
 # # Mark test as expected to fail with "libbpf: elf: failed to open not_a_file.o: No such file or directory"
@@ -182,7 +182,7 @@ set_tests_properties(
 # Test for function map_state_preparation not found
 add_test(
   NAME function_map_state_preparation_not_found
-  COMMAND sudo bin/bpf_performance_runner -i bin/tests/function_map_state_preparation_not_found.yaml
+  COMMAND sudo bin/bpf_performance_runner -i ${TEST_FILE_DIRECTORY}/function_map_state_preparation_not_found.yaml
 )
 
 # Mark test as expected to fail with "Error: Failed to find map_state_preparation program not_a_real_function"
@@ -194,7 +194,7 @@ set_tests_properties(
 # Test for map_state_preparation.program not found
 add_test(
   NAME map_state_preparation_program_not_found
-  COMMAND sudo bin/bpf_performance_runner -i bin/tests/map_state_preparation_program_not_found.yaml
+  COMMAND sudo bin/bpf_performance_runner -i ${TEST_FILE_DIRECTORY}/map_state_preparation_program_not_found.yaml
 )
 
 # Mark test as expected to fail with "Error: Field map_state_preparation.program is required"
@@ -206,7 +206,7 @@ set_tests_properties(
 # Test for map_state_preparation.iteration_count not found
 add_test(
   NAME map_state_preparation_iteration_count_not_found
-  COMMAND sudo bin/bpf_performance_runner -i bin/tests/map_state_preparation_iteration_count_not_found.yaml
+  COMMAND sudo bin/bpf_performance_runner -i ${TEST_FILE_DIRECTORY}/map_state_preparation_iteration_count_not_found.yaml
 )
 
 # Mark test as expected to fail with "Error: Field map_state_preparation.iteration_count is required"
@@ -218,7 +218,7 @@ set_tests_properties(
 # Test for program_cpu_assignment.program not found
 add_test(
   NAME function_program_cpu_assignment_not_found
-  COMMAND sudo bin/bpf_performance_runner -i bin/tests/function_program_cpu_assignment_not_found.yaml
+  COMMAND sudo bin/bpf_performance_runner -i ${TEST_FILE_DIRECTORY}/function_program_cpu_assignment_not_found.yaml
 )
 
 # Mark test as expected to fail with "Error: Failed to find program not_a_function"
@@ -230,7 +230,7 @@ set_tests_properties(
 # Test for invalid program_cpu_assignment value
 add_test(
   NAME invalid_program_cpu_assignment_value
-  COMMAND sudo bin/bpf_performance_runner -i bin/tests/invalid_program_cpu_assignment_value.yaml
+  COMMAND sudo bin/bpf_performance_runner -i ${TEST_FILE_DIRECTORY}/invalid_program_cpu_assignment_value.yaml
 )
 
 # Mark test as expected to fail with "Error: Invalid program_cpu_assignment - must be string or sequence"
