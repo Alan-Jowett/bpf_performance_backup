@@ -120,6 +120,7 @@ jobs:
       working-directory: ${{github.workspace}}/build/bin
       run: |
         sudo ./bpf_performance_runner -i tests.yml | tee ${{github.workspace}}/results/jit-${{inputs.platform}}-${{env.BUILD_TYPE}}.csv
+        exit ${PIPESTATUS[0]}
 
     - name: Install prerequisites - Windows-2019 or Windows-2022
       if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
@@ -139,7 +140,7 @@ jobs:
       working-directory: ${{github.workspace}}/build/bin
       # Run with option to ignore failing return code
       run: |
-        ${{env.BUILD_TYPE}}\bpf_performance_runner.exe -i tests.yml -r | Tee-Object -FilePath ${{github.workspace}}/results/jit-${inputs.platform}-${{env.BUILD_TYPE}}.csv
+        ${{env.BUILD_TYPE}}\bpf_performance_runner.exe -i tests.yml | Tee-Object -FilePath ${{github.workspace}}/results/jit-${inputs.platform}-${{env.BUILD_TYPE}}.csv
 
     - name: Upload results
       uses: actions/upload-artifact@v2
