@@ -14,9 +14,9 @@
     {                                                                                   \
         int i = x + 1;                                                                  \
         bpf_printk("xdp_test_callee: Tail call index [cur = %d], [next = %i]\n", x, i); \
-        if (bpf_tail_call(ctx, &xdp_tail_call_map, i) < 0) {                            \
+        bpf_tail_call(ctx, &xdp_tail_call_map, i);                                      \
             bpf_printk("Tail call failed at index %d\n", i);                            \
-        }                                                                               \
+                                                                                        \
         return -1;                                                                      \
     }
 
@@ -62,7 +62,7 @@ DECLARE_XDP_TAIL_FUNC(34)
 struct
 {
     __uint(type, BPF_MAP_TYPE_PROG_ARRAY);
-    __type(key, sizeof(__u32));
+    __uint(key_size, sizeof(__u32));
     __uint(max_entries, MAX_TAIL_CALL_COUNT + 3);
     __array(values, int(struct xdp_md* ctx));
 } xdp_tail_call_map SEC(".maps") = {
@@ -118,11 +118,8 @@ int
 xdp_test_caller(struct xdp_md* ctx)
 {
     bpf_printk("xdp_test_caller: Starting Tail callees with [MAX COUNT = %d]\n", MAX_TAIL_CALL_COUNT);
-    if (bpf_tail_call(ctx, &xdp_tail_call_map, 0) < 0) {
-        bpf_printk("Failed Tail call index %d\n", 0);
-        return -1;
-    }
-
+    bpf_tail_call(ctx, &xdp_tail_call_map, 0);
+    bpf_printk("Failed Tail call index %d\n", 0);
     return -1;
 }
 
@@ -135,3 +132,5 @@ xdp_test_callee34(struct xdp_md* ctx)
     // This function returns 0 to allow the xdp request to proceed.
     return 0;
 }
+
+char _license[] SEC("license") = "GPL/MIT";
