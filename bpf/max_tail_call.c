@@ -62,7 +62,7 @@ DECLARE_XDP_TAIL_FUNC(34)
 struct
 {
     __uint(type, BPF_MAP_TYPE_PROG_ARRAY);
-    __type(key, uint32_t);
+    __type(key, sizeof(__u32));
     __uint(max_entries, MAX_TAIL_CALL_COUNT + 3);
     __array(values, int(struct xdp_md* ctx));
 } xdp_tail_call_map SEC(".maps") = {
