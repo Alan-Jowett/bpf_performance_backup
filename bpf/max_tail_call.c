@@ -5,6 +5,8 @@
 
 // Test to check the maximum tail call callee count, without the caller.
 
+#define MAX_TAIL_CALL_COUNT 32
+
 // Define a macro that defines a program which tail calls a function for the bind hook.
 #define DEFINE_BIND_TAIL_FUNC(x)                                                                \
     SEC("bind/" #x)                                                                             \
@@ -61,7 +63,7 @@ struct
 {
     __uint(type, BPF_MAP_TYPE_PROG_ARRAY);
     __type(key, uint32_t);
-    __uint(max_entries, MAX_TAIL_CALL_CNT + 3);
+    __uint(max_entries, MAX_TAIL_CALL_COUNT + 3);
     __array(values, bind_action_t(bind_md_t* ctx));
 } bind_tail_call_map SEC(".maps") = {
     .values = {
