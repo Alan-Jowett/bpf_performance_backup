@@ -403,6 +403,6 @@ tests:
     elf_file: max_tail_call.o
     iteration_count: 1
     program_cpu_assignment:
-      BindMonitor_Test_Caller: all
+      xdp_test_caller: all
 
   # Add more test cases as needed
