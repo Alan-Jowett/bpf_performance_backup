@@ -401,7 +401,7 @@ tests:
   - name: bpf_tail_callee_max
     description: Tests the max tail call callees.
     elf_file: max_tail_call.o
-    iteration_count: 1
+    iteration_count: 1000000
     program_cpu_assignment:
       xdp_test_caller: all
 
