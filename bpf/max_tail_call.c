@@ -1,23 +1,23 @@
 // Copyright (c) Microsoft Corporation
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL/MIT
 
 #include "bpf.h"
 
-// Test to check the maximum tail call callee count, without the caller.
+// Get performance numbers for the scaled maximum tail call callee count,
+// without the caller.
 
 #define MAX_TAIL_CALL_COUNT 32
 
 // Define a macro that defines a program which tail calls a function for the xdp hook.
-#define DEFINE_XDP_TAIL_FUNC(x)                                                         \
-    SEC("xdp/" #x)                                                                      \
-    int xdp_test_callee##x(struct xdp_md* ctx)                                          \
-    {                                                                                   \
-        int i = x + 1;                                                                  \
-        bpf_printk("xdp_test_callee: Tail call index [cur = %d], [next = %i]\n", x, i); \
-        bpf_tail_call(ctx, &xdp_tail_call_map, i);                                      \
-            bpf_printk("Tail call failed at index %d\n", i);                            \
-                                                                                        \
-        return -1;                                                                      \
+#define DEFINE_XDP_TAIL_FUNC(x)                          \
+    SEC("xdp/" #x)                                       \
+    int xdp_test_callee##x(struct xdp_md* ctx)           \
+    {                                                    \
+        int i = x + 1;                                   \
+        bpf_tail_call(ctx, &xdp_tail_call_map, i);       \
+        bpf_printk("Tail call failed at index %d\n", i); \
+                                                         \
+        return -1;                                       \
     }
 
 #define DECLARE_XDP_TAIL_FUNC(x) int xdp_test_callee##x(struct xdp_md* ctx);
@@ -117,7 +117,6 @@ SEC("xdp")
 int
 xdp_test_caller(struct xdp_md* ctx)
 {
-    bpf_printk("xdp_test_caller: Starting Tail callees with [MAX COUNT = %d]\n", MAX_TAIL_CALL_COUNT);
     bpf_tail_call(ctx, &xdp_tail_call_map, 0);
     bpf_printk("Failed Tail call index %d\n", 0);
     return -1;
@@ -127,7 +126,6 @@ SEC("xdp/34")
 int
 xdp_test_callee34(struct xdp_md* ctx)
 {
-    bpf_printk("Last Tail call index: xdp_test_callee34. Returning success.\n");
     // This function is the last tail call function for the xdp hook.
     // This function returns 0 to allow the xdp request to proceed.
     return 0;
