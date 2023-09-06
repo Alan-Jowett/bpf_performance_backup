@@ -60,6 +60,8 @@ main(int argc, char** argv)
         std::optional<int> iteration_count_override;
         std::optional<int> cpu_count_override;
         std::optional<bool> ignore_return_code;
+        std::optional<std::string> pre_test_command;
+        std::optional<std::string> post_test_command;
         bool csv_header_printed = false;
 
         // Add option "-i" for test input file.
@@ -101,6 +103,20 @@ main(int argc, char** argv)
             1,
             [&ignore_return_code](auto iter) { ignore_return_code = {true}; },
             "Ignore return code from BPF programs");
+
+        // Add option to run a command before each test.
+        cmd_options.add(
+            "--pre",
+            2,
+            [&pre_test_command](auto iter) { pre_test_command = *iter; },
+            "Command to run before each test");
+
+        // Add option to run a command after each test.
+        cmd_options.add(
+            "--post",
+            2,
+            [&post_test_command](auto iter) { post_test_command = *iter; },
+            "Command to run after each test");
 
         // Parse command line options.
         cmd_options.parse(argc, argv);
@@ -323,6 +339,19 @@ main(int argc, char** argv)
                 }
             }
 
+            // Run the pre-test command if specified.
+            if (pre_test_command.has_value()) {
+                std::string command = pre_test_command.value();
+                command = std::regex_replace(command, std::regex("%NAME%"), name);
+                command = std::regex_replace(command, std::regex("%ELF_FILE%"), elf_file);
+                command = std::regex_replace(command, std::regex("%ITERATION_COUNT%"), std::to_string(iteration_count));
+                command = std::regex_replace(command, std::regex("%CPU_COUNT%"), std::to_string(cpu_count));
+                command = std::regex_replace(command, std::regex("%BATCH_SIZE%"), std::to_string(batch_size));
+                if (system(command.c_str()) != 0) {
+                    throw std::runtime_error("Pre-test command failed");
+                }
+            }
+
             // Run each entry point via bpf_prog_test_run_opts in a thread.
             std::vector<std::jthread> threads;
             std::vector<bpf_test_run_opts> opts(cpu_count);
@@ -370,6 +399,19 @@ main(int argc, char** argv)
                     } else {
                         throw std::runtime_error(message);
                     }
+                }
+            }
+
+            // Run the post-test command if specified.
+            if (post_test_command.has_value()) {
+                std::string command = post_test_command.value();
+                command = std::regex_replace(command, std::regex("%NAME%"), name);
+                command = std::regex_replace(command, std::regex("%ELF_FILE%"), elf_file);
+                command = std::regex_replace(command, std::regex("%ITERATION_COUNT%"), std::to_string(iteration_count));
+                command = std::regex_replace(command, std::regex("%CPU_COUNT%"), std::to_string(cpu_count));
+                command = std::regex_replace(command, std::regex("%BATCH_SIZE%"), std::to_string(batch_size));
+                if (system(command.c_str()) != 0) {
+                    throw std::runtime_error("Post-test command failed");
                 }
             }
 
