@@ -30,7 +30,25 @@ typedef std::unique_ptr<struct bpf_object, bpf_object_deleter> bpf_object_ptr;
 const std::string runner_platform = "Linux";
 #else
 const std::string runner_platform = "Windows";
+#define popen _popen
+#define pclose _pclose
 #endif
+
+int run_command_and_capture_output(const std::string& command, std::string& command_output)
+{
+    FILE* pipe = popen(command.c_str(), "r");
+
+    // Read until end of file.
+    while (!feof(pipe)) {
+        char buffer[1024];
+        if (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+            command_output += buffer;
+        }
+    }
+
+    // Return the exit code.
+    return pclose(pipe);
+}
 
 // This program runs a set of BPF programs and reports the average execution time for each program.
 // It reads a YAML file that contains the following fields:
@@ -342,13 +360,15 @@ main(int argc, char** argv)
             // Run the pre-test command if specified.
             if (pre_test_command.has_value()) {
                 std::string command = pre_test_command.value();
+                std::string command_output;
                 command = std::regex_replace(command, std::regex("%NAME%"), name);
                 command = std::regex_replace(command, std::regex("%ELF_FILE%"), elf_file);
                 command = std::regex_replace(command, std::regex("%ITERATION_COUNT%"), std::to_string(iteration_count));
                 command = std::regex_replace(command, std::regex("%CPU_COUNT%"), std::to_string(cpu_count));
                 command = std::regex_replace(command, std::regex("%BATCH_SIZE%"), std::to_string(batch_size));
-                if (system(command.c_str()) != 0) {
+                if (run_command_and_capture_output(command, command_output) != 0) {
                     std::cerr << "Pre-test command failed: " << command << std::endl;
+                    std::cerr << command_output << std::endl;
                 }
             }
 
@@ -405,13 +425,16 @@ main(int argc, char** argv)
             // Run the post-test command if specified.
             if (post_test_command.has_value()) {
                 std::string command = post_test_command.value();
+                std::string command_output;
                 command = std::regex_replace(command, std::regex("%NAME%"), name);
                 command = std::regex_replace(command, std::regex("%ELF_FILE%"), elf_file);
                 command = std::regex_replace(command, std::regex("%ITERATION_COUNT%"), std::to_string(iteration_count));
                 command = std::regex_replace(command, std::regex("%CPU_COUNT%"), std::to_string(cpu_count));
                 command = std::regex_replace(command, std::regex("%BATCH_SIZE%"), std::to_string(batch_size));
-                if (system(command.c_str()) != 0) {
+
+                if (run_command_and_capture_output(command, command_output) != 0) {
                     std::cerr << "Post-test command failed: " << command << std::endl;
+                    std::cerr << command_output << std::endl;
                 }
             }
 

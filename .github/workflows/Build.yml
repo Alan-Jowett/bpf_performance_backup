@@ -134,7 +134,7 @@ jobs:
       working-directory: ${{github.workspace}}/build/bin
       run: |
         $pre_command = 'wpr.exe -start CPU'
-        $post_command = 'wpr.exe -stop ""%NAME%.etl""'
+        $post_command = 'wpr.exe -stop ""${{github.workspace}}\results\%NAME%.etl""'
         ${{env.BUILD_TYPE}}\bpf_performance_runner.exe -i tests.yml -e .sys -r --pre "$pre_command" --post "$post_command" | Tee-Object -FilePath ${{github.workspace}}/results/native-${inputs.platform}-${{env.BUILD_TYPE}}.csv
 
     - name: Tests - Windows 2019 or Windows 2022 - JIT
@@ -142,7 +142,9 @@ jobs:
       working-directory: ${{github.workspace}}/build/bin
       # Run with option to ignore failing return code
       run: |
-        ${{env.BUILD_TYPE}}\bpf_performance_runner.exe -i tests.yml -r | Tee-Object -FilePath ${{github.workspace}}/results/native-${inputs.platform}-${{env.BUILD_TYPE}}.csv
+        $pre_command = 'wpr.exe -start CPU'
+        $post_command = 'wpr.exe -stop ""${{github.workspace}}\results\%NAME%-jit.etl""'
+        ${{env.BUILD_TYPE}}\bpf_performance_runner.exe -i tests.yml -r --pre "$pre_command" --post "$post_command" | Tee-Object -FilePath ${{github.workspace}}/results/native-${inputs.platform}-${{env.BUILD_TYPE}}.csv
 
     - name: Upload results
       uses: actions/upload-artifact@v2
