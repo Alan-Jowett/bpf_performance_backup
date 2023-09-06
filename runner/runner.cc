@@ -348,7 +348,7 @@ main(int argc, char** argv)
                 command = std::regex_replace(command, std::regex("%CPU_COUNT%"), std::to_string(cpu_count));
                 command = std::regex_replace(command, std::regex("%BATCH_SIZE%"), std::to_string(batch_size));
                 if (system(command.c_str()) != 0) {
-                    throw std::runtime_error("Pre-test command failed");
+                    std::cerr << "Pre-test command failed: " << command << std::endl;
                 }
             }
 
@@ -411,7 +411,7 @@ main(int argc, char** argv)
                 command = std::regex_replace(command, std::regex("%CPU_COUNT%"), std::to_string(cpu_count));
                 command = std::regex_replace(command, std::regex("%BATCH_SIZE%"), std::to_string(batch_size));
                 if (system(command.c_str()) != 0) {
-                    throw std::runtime_error("Post-test command failed");
+                    std::cerr << "Post-test command failed: " << command << std::endl;
                 }
             }
 

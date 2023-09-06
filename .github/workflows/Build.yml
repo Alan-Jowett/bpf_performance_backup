@@ -133,11 +133,9 @@ jobs:
       if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
       working-directory: ${{github.workspace}}/build/bin
       run: |
-        $pre_command = ${{github.workspace}}\scripts\start_trace.cmd
-        $post_command = ${{github.workspace}}\scripts\stop_trace.cmd ${{github.workspace}}\results ""%NAME%.etl""
+        $pre_command = 'wpr.exe -start CPU'
+        $post_command = 'wpr.exe -stop ""%NAME%.etl""'
         ${{env.BUILD_TYPE}}\bpf_performance_runner.exe -i tests.yml -e .sys -r --pre "$pre_command" --post "$post_command" | Tee-Object -FilePath ${{github.workspace}}/results/native-${inputs.platform}-${{env.BUILD_TYPE}}.csv
-        $wpr_log = Get-Content wpr.log
-        write-host "WPR log: $wpr_log"
 
     - name: Tests - Windows 2019 or Windows 2022 - JIT
       if: inputs.platform == 'windows-2019' || inputs.platform == 'windows-2022'
