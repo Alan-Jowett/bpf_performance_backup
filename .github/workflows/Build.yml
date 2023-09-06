@@ -150,7 +150,9 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: results-${{env.BUILD_TYPE}}-${{inputs.platform}}
-        path: ${{github.workspace}}/results
+        path: |
+          ${{github.workspace}}/results/*.csv
+          ${{github.workspace}}/results/*.etl
 
     - name: Self-Tests
       if: inputs.platform == 'ubuntu-22.04'
