@@ -4,9 +4,12 @@
 #include "options.h"
 #include <bpf/bpf.h>
 #include <bpf/libbpf.h>
+#include <chrono>
+#include <iomanip>
 #include <iostream>
 #include <optional>
 #include <regex>
+#include <sstream>
 #include <thread>
 #include <vector>
 #include <yaml-cpp/yaml.h>
@@ -48,6 +51,17 @@ int run_command_and_capture_output(const std::string& command, std::string& comm
 
     // Return the exit code.
     return pclose(pipe);
+}
+
+// Function to convert std::chrono time point to ISO 8601 UTC string.
+std::string to_iso8601(const std::chrono::system_clock::time_point tp)
+{
+    std::time_t t = std::chrono::system_clock::to_time_t(tp);
+    std::tm tm;
+    gmtime_s(&tm, &t);
+    std::stringstream ss;
+    ss << std::put_time(&tm, "%FT%T%z");
+    return ss.str();
 }
 
 // This program runs a set of BPF programs and reports the average execution time for each program.
@@ -372,6 +386,8 @@ main(int argc, char** argv)
                 }
             }
 
+            auto now = std::chrono::system_clock::now();
+
             // Run each entry point via bpf_prog_test_run_opts in a thread.
             std::vector<std::jthread> threads;
             std::vector<bpf_test_run_opts> opts(cpu_count);
@@ -440,6 +456,7 @@ main(int argc, char** argv)
 
             // Print a CSV header if not already printed.
             if (!csv_header_printed) {
+                std::cout << "Timestamp,";
                 std::cout << "Test,";
                 for (size_t i = 0; i < opts.size(); i++) {
                     if (!cpu_program_assignments[i].has_value()) {
@@ -456,7 +473,7 @@ main(int argc, char** argv)
             }
 
             // Print the average execution time for each program on each CPU.
-            std::cout << name << ",";
+            std::cout  << to_iso8601(now) << "," << name << ",";
 
             for (size_t i = 0; i < opts.size(); i++) {
                 if (!cpu_program_assignments[i].has_value()) {
