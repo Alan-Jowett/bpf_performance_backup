@@ -152,6 +152,12 @@ jobs:
         name: results-${{env.BUILD_TYPE}}-${{inputs.platform}}
         path: |
           ${{github.workspace}}/results/*.csv
+
+    - name: Upload profile
+      uses: actions/upload-artifact@v2
+      with:
+        name: results-${{env.BUILD_TYPE}}-${{inputs.platform}}
+        path: |
           ${{github.workspace}}/results/*.etl
 
     - name: Self-Tests
