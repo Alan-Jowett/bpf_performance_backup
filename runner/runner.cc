@@ -31,6 +31,7 @@ typedef std::unique_ptr<struct bpf_object, bpf_object_deleter> bpf_object_ptr;
 // Set string runner_platform to "linux" to indicate that this is a Linux runner.
 #if defined(__linux__)
 const std::string runner_platform = "Linux";
+#define gmtime_s gmtime_r
 #else
 const std::string runner_platform = "Windows";
 #define popen _popen
