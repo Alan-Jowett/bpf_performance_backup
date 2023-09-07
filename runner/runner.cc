@@ -458,12 +458,13 @@ main(int argc, char** argv)
             if (!csv_header_printed) {
                 std::cout << "Timestamp,";
                 std::cout << "Test,";
+                std::cout << "Average Duration (ns),";
                 for (size_t i = 0; i < opts.size(); i++) {
                     if (!cpu_program_assignments[i].has_value()) {
                         continue;
                     }
                     auto& opt = opts[i];
-                    std::cout << "CPU " << i;
+                    std::cout << "CPU " << i << " Duration (ns)";
                     if (i < opts.size() - 1) {
                         std::cout << ",";
                     }
@@ -474,6 +475,14 @@ main(int argc, char** argv)
 
             // Print the average execution time for each program on each CPU.
             std::cout  << to_iso8601(now) << "," << name << ",";
+
+            uint64_t total_duration = 0;
+            uint64_t total_count = 0;
+            for (auto opt : opts) {
+                total_duration += opt.duration;
+                total_count ++;
+            }
+            std::cout << total_duration / total_count << ",";
 
             for (size_t i = 0; i < opts.size(); i++) {
                 if (!cpu_program_assignments[i].has_value()) {
