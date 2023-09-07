@@ -31,11 +31,12 @@ typedef std::unique_ptr<struct bpf_object, bpf_object_deleter> bpf_object_ptr;
 // Set string runner_platform to "linux" to indicate that this is a Linux runner.
 #if defined(__linux__)
 const std::string runner_platform = "Linux";
-#define gmtime_s gmtime_r
+#define time_t_to_utc_tm(TM, TIME) gmtime_r(TIME, TM)
 #else
 const std::string runner_platform = "Windows";
 #define popen _popen
 #define pclose _pclose
+#define time_t_to_utc_tm(TM, TIME) gmtime_s(TM, TIME)
 #endif
 
 int run_command_and_capture_output(const std::string& command, std::string& command_output)
@@ -59,7 +60,7 @@ std::string to_iso8601(const std::chrono::system_clock::time_point tp)
 {
     std::time_t t = std::chrono::system_clock::to_time_t(tp);
     std::tm tm;
-    gmtime_s(&tm, &t);
+    time_t_to_utc_tm(&tm, &t);
     std::stringstream ss;
     ss << std::put_time(&tm, "%FT%T%z");
     return ss.str();
@@ -464,7 +465,6 @@ main(int argc, char** argv)
                     if (!cpu_program_assignments[i].has_value()) {
                         continue;
                     }
-                    auto& opt = opts[i];
                     std::cout << "CPU " << i << " Duration (ns)";
                     if (i < opts.size() - 1) {
                         std::cout << ",";
