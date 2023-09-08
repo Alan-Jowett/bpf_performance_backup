@@ -33,9 +33,13 @@ jobs:
         platform: [ 'ubuntu-22.04', 'windows-2019', 'windows-2022' ]
         option: [ none, sanitizer, coverage ]
         exclude:
-          - platform: [windows-2019, windows-2022]
+          - platform: windows-2019
             option: sanitizer
-          - platform: [windows-2019, windows-2022]
+          - platform: windows-2019
+            option: coverage
+          - platform: windows-2022
+            option: sanitizer
+          - platform: windows-2022
             option: coverage
 
     uses: ./.github/workflows/Build.yml
