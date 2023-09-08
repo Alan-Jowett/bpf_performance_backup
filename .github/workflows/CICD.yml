@@ -66,7 +66,7 @@ jobs:
       - build_and_test
     strategy:
       matrix:
-        platforms: [ 'ubuntu-22.04', 'windows-2019', 'windows-2022' ]
+        platform: [ 'ubuntu-22.04', 'windows-2019', 'windows-2022' ]
 
     runs-on: ubuntu-latest
     steps:
