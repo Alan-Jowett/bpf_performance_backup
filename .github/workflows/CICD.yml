@@ -26,91 +26,29 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  windows_release:
-    uses: ./.github/workflows/Build.yml
-    with:
-      platform: windows-2019
-      configuration: RelWithDebInfo
-      enable_sanitizers: false
-      enable_coverage: false
+  build_and_test:
+    strategy:
+      matrix:
+        configurations: [ 'Release', 'Debug' ]
+        platforms: [ 'ubuntu-22.04', 'windows-2019', 'windows-2022' ]
+        sanitizers: [ false, true ]
+        coverage: [ false, true ]
+        exclude:
+          - platform: [windows-2019, windows-2022]
+            sanitizers: true
+          - platform: [windows-2019, windows-2022]
+            coverage: true
 
-  windows_debug:
     uses: ./.github/workflows/Build.yml
     with:
-      platform: windows-2019
-      configuration: Debug
-      enable_sanitizers: false
-      enable_coverage: false
-
-  windows_release_2022:
-    uses: ./.github/workflows/Build.yml
-    with:
-      platform: windows-2022
-      configuration: RelWithDebInfo
-      enable_sanitizers: false
-      enable_coverage: false
-
-  windows_debug_2022:
-    uses: ./.github/workflows/Build.yml
-    with:
-      platform: windows-2022
-      configuration: Debug
-      enable_sanitizers: false
-      enable_coverage: false
-
-  ubuntu_release:
-    uses: ./.github/workflows/Build.yml
-    with:
-      platform: ubuntu-22.04
-      configuration: Release
-      enable_sanitizers: false
-      enable_coverage: false
-      publish_docker: true
-
-  ubuntu_debug:
-    uses: ./.github/workflows/Build.yml
-    with:
-      platform: ubuntu-22.04
-      configuration: Debug
-      enable_sanitizers: false
-      enable_coverage: false
-
-  ubuntu_release_sanitizers:
-    uses: ./.github/workflows/Build.yml
-    with:
-      platform: ubuntu-22.04
-      configuration: Release
-      enable_sanitizers: true
-      enable_coverage: false
-
-  ubuntu_debug_sanitizers:
-    uses: ./.github/workflows/Build.yml
-    with:
-      platform: ubuntu-22.04
-      configuration: Debug
-      enable_sanitizers: true
-      enable_coverage: false
-
-  ubuntu_release_coverage:
-    uses: ./.github/workflows/Build.yml
-    with:
-      platform: ubuntu-22.04
-      configuration: Release
-      enable_sanitizers: false
-      enable_coverage: true
-
-  ubuntu_debug_coverage:
-    uses: ./.github/workflows/Build.yml
-    with:
-      platform: ubuntu-22.04
-      configuration: Debug
-      enable_sanitizers: false
-      enable_coverage: true
+      platform: ${{ matrix.platform }}
+      configuration: ${{ matrix.configuration }}
+      enable_sanitizers: ${{ matrix.sanitizers }}
+      enable_coverage: ${{ matrix.coverage }}
 
   finish:
     needs:
-      - ubuntu_release_coverage
-      - ubuntu_debug_coverage
+      - build_and_test
     runs-on: ubuntu-22.04
     steps:
     - name: Coveralls Finished
@@ -120,7 +58,14 @@ jobs:
         parallel-finished: true
 
 
-  build-and-deploy:
+  # Note: This can't be in a workflow_call as the login action doesn't work.
+  upload_results:
+    needs:
+      - build_and_test
+    strategy:
+      matrix:
+        platforms: [ 'ubuntu-22.04', 'windows-2019', 'windows-2022' ]
+
     runs-on: ubuntu-latest
     steps:
     - name: 'Az CLI login'
@@ -130,8 +75,23 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    - name: 'Run Azure CLI commands'
+    - uses: actions/checkout@v3
+
+    - name: Download performance result artifacts
+      uses: actions/download-artifact@v2
+      with:
+        name: results-Release-${{matrix.platform}}
+        path: results
+
+    - name: Post-process results
       run: |
-          az account show
-          az group list
-          pwd
+        python3 scripts/process_results.py --csv-directory ${{github.workspace}}/results --sql-script-file ${{github.workspace}}/results/upload.sql --commit_id ${{github.sha}} --platform ${{matrix.platform}} --build_type ${{matrix.configuration}} --arch ${{matrix.arch}}
+
+    - name: Upload performance data
+      uses: azure/sql-action@v2.2
+      with:
+        connection-string: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
+        path: ${{github.workspace}}/results/upload.sql
+
+    - name: azure logout
+      run: az logout

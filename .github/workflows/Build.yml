@@ -24,23 +24,15 @@ on:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   build:
-    environment: production
+
     runs-on: ${{inputs.platform}}
     env:
       BUILD_TYPE: ${{inputs.configuration}}
 
     steps:
-    - name: 'Az CLI login'
-      uses: azure/login@v1
-      with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
     - uses: actions/checkout@v3
       with:
         submodules: 'recursive'
@@ -168,17 +160,6 @@ jobs:
         path: |
           ${{github.workspace}}/results/*.etl
 
-    - name: Post-process results
-      run: |
-        python3 scripts/process_results.py --csv-directory ${{github.workspace}}/results --sql-script-file ${{github.workspace}}/results/upload.sql --commit_id ${{github.sha}} --platform ${{inputs.platform}}/${{env.BUILD_TYPE}} --commit_id ${{github.sha}}
-
-    - name: Upload SQL script
-      uses: actions/upload-artifact@v2
-      with:
-        name: sql-${{env.BUILD_TYPE}}-${{inputs.platform}}
-        path: |
-          ${{github.workspace}}/results/upload.sql
-
     - name: Self-Tests
       if: inputs.platform == 'ubuntu-22.04'
       working-directory: ${{github.workspace}}/build/bin
@@ -198,13 +179,3 @@ jobs:
         github-token: ${{ secrets.github_token }}
         flag-name: run-${{inputs.build_type}}-${{inputs.platform}}-${{inputs.arch}}
         parallel: true
-
-
-    - name: Upload performance data
-      uses: azure/sql-action@v2.2
-      with:
-        connection-string: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
-        path: ${{github.workspace}}/results/upload.sql
-
-    - name: azure logout
-      run: az logout
