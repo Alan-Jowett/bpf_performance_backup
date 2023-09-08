@@ -37,6 +37,13 @@ jobs:
       with:
         submodules: 'recursive'
 
+    - name: Log into Azure
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
     - name: Install prerequisites - Ubuntu-22.04
       if: inputs.platform == 'ubuntu-22.04'
       run: |
@@ -191,12 +198,6 @@ jobs:
         flag-name: run-${{inputs.build_type}}-${{inputs.platform}}-${{inputs.arch}}
         parallel: true
 
-    - name: Log into Azure
-      uses: azure/login@v1
-      with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Upload performance data
       uses: azure/sql-action@v2.2
