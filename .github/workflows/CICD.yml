@@ -34,7 +34,9 @@ jobs:
         option: [ none, sanitizer, coverage ]
         exclude:
           - platform: [windows-2019, windows-2022]
-            option: [ sanitizer, coverage ]
+            option: sanitizer
+          - platform: [windows-2019, windows-2022]
+            option: coverage
 
     uses: ./.github/workflows/Build.yml
     with:
