@@ -34,7 +34,7 @@ jobs:
         sanitizers: [ false, true ]
         coverage: [ false, true ]
         exclude:
-          - platform: [windows-2019, windows-2022]
+          - platforms: [windows-2019, windows-2022]
             sanitizers: true
           - platform: [windows-2019, windows-2022]
             coverage: true
