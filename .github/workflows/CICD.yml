@@ -31,20 +31,16 @@ jobs:
       matrix:
         configuration: [ 'Release', 'Debug' ]
         platform: [ 'ubuntu-22.04', 'windows-2019', 'windows-2022' ]
-        sanitizer: [ false, true ]
-        coverage: [ false, true ]
+        option: [ none, sanitizer, coverage ]
         exclude:
           - platform: [windows-2019, windows-2022]
-            sanitizer: true
-          - platform: [windows-2019, windows-2022]
-            coverage: true
+            option: [ sanitizer, coverage ]
 
     uses: ./.github/workflows/Build.yml
     with:
       platform: ${{ matrix.platform }}
       configuration: ${{ matrix.configuration }}
-      enable_sanitizers: ${{ matrix.sanitizer }}
-      enable_coverage: ${{ matrix.coverage }}
+      option: ${{ matrix.option }}
 
   finish:
     needs:

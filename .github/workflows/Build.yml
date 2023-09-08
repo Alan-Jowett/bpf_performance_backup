@@ -12,15 +12,9 @@ on:
       configuration:
         required: true
         type: string
-      enable_sanitizers:
+      option:
         required: false
-        type: boolean
-      enable_coverage:
-        required: false
-        type: boolean
-      publish_docker:
-        required: false
-        type: boolean
+        type: string
 
 permissions:
   contents: read
@@ -89,10 +83,10 @@ jobs:
     - name: Configure CMake - Ubuntu-22.04
       if: inputs.platform == 'ubuntu-22.04'
       run: |
-        if [ "${{inputs.enable_sanitizers}}" = "true" ]; then
+        if [ "${{inputs.option}}" = "sanitizer" ]; then
           export SANITIZER_FLAGS="-fsanitize=address -fsanitize=undefined -fno-sanitize-recover=all"
         fi
-        if [ "${{inputs.enable_coverage}}" = "true" ]; then
+        if [ "${{inputs.option}}" = "coverage" ]; then
           export COVERAGE_FLAGS="-DCMAKE_CXX_FLAGS=\"--coverage\" -DCMAKE_C_FLAGS=\"--coverage\""
         fi
         cmake \
