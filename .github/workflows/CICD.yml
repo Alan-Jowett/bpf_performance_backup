@@ -30,12 +30,12 @@ jobs:
     strategy:
       matrix:
         configurations: [ 'Release', 'Debug' ]
-        platforms: [ 'ubuntu-22.04', 'windows-2019', 'windows-2022' ]
-        sanitizers: [ false, true ]
+        platform: [ 'ubuntu-22.04', 'windows-2019', 'windows-2022' ]
+        sanitizer: [ false, true ]
         coverage: [ false, true ]
         exclude:
-          - platforms: [windows-2019, windows-2022]
-            sanitizers: true
+          - platform: [windows-2019, windows-2022]
+            sanitizer: true
           - platform: [windows-2019, windows-2022]
             coverage: true
 
@@ -43,7 +43,7 @@ jobs:
     with:
       platform: ${{ matrix.platform }}
       configuration: ${{ matrix.configuration }}
-      enable_sanitizers: ${{ matrix.sanitizers }}
+      enable_sanitizers: ${{ matrix.sanitizer }}
       enable_coverage: ${{ matrix.coverage }}
 
   finish:
