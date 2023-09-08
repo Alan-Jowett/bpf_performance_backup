@@ -65,12 +65,12 @@ def parse_csv_file(csv_file):
 
 def convert_csv_file_to_sql_script(csv_file, sql_script_file, commit_id, platform):
     csv_rows = parse_csv_file(csv_file)
-    sql_script_file.write("INSERT INTO [dbo].[BenchmarkResults] (")
-    sql_script_file.write(f"[{TIMESTAMP_SQL_COLUMN_NAME}], ")
-    sql_script_file.write(f"[{METRIC_SQL_COLUMN_NAME}], ")
-    sql_script_file.write(f"[{VALUE_SQL_COLUMN_NAME}], ")
-    sql_script_file.write(f"[{COMMIT_HASH_SQL_COLUMN_NAME}], ")
-    sql_script_file.write(f"[{PLATFORM_SQL_COLUMN_NAME}]")
+    sql_script_file.write("INSERT INTO BenchmarkResults (")
+    sql_script_file.write(f"{TIMESTAMP_SQL_COLUMN_NAME}, ")
+    sql_script_file.write(f"{METRIC_SQL_COLUMN_NAME}, ")
+    sql_script_file.write(f"{VALUE_SQL_COLUMN_NAME}, ")
+    sql_script_file.write(f"{COMMIT_HASH_SQL_COLUMN_NAME}, ")
+    sql_script_file.write(f"{PLATFORM_SQL_COLUMN_NAME}")
     sql_script_file.write(")\n")
     sql_script_file.write("VALUES\n")
     for csv_row in csv_rows:
@@ -83,7 +83,11 @@ def convert_csv_file_to_sql_script(csv_file, sql_script_file, commit_id, platfor
         sql_script_file.write(f"{csv_row[VALUE_COLUMN_NAME]}, ")
         sql_script_file.write(f"'{commit_id}', ")
         sql_script_file.write(f"'{platform}'")
-        sql_script_file.write("),\n")
+        # Write a comma if this is not the last row.
+        if csv_row != csv_rows[-1]:
+            sql_script_file.write("),\n")
+        else:
+            sql_script_file.write(")")
     sql_script_file.write(";\n")
 
 # Convert the given CSV files to a SQL script and write it to the given file.

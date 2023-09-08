@@ -70,13 +70,6 @@ jobs:
 
     runs-on: ubuntu-latest
     steps:
-    - name: 'Az CLI login'
-      uses: azure/login@v1
-      with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
     - uses: actions/checkout@v3
 
     - name: Download performance result artifacts
@@ -89,11 +82,12 @@ jobs:
       run: |
         python3 scripts/process_results.py --csv-directory ${{github.workspace}}/results --sql-script-file ${{github.workspace}}/results/upload.sql --commit_id ${{github.sha}} --platform ${{matrix.platform}}
 
-    - name: Upload performance data
-      uses: azure/sql-action@v2.2
-      with:
-        connection-string: ${{ secrets.AZURE_SQL_CONNECTION_STRING }}
-        path: ${{github.workspace}}/results/upload.sql
-
-    - name: azure logout
-      run: az logout
+    - name: Upload results to POSTGRES
+      env:
+        PGHOST: ${{secrets.PGHOST}}
+        PGUSER: ${{secrets.PGUSER}}
+        PGPORT: ${{secrets.PGPORT}}
+        PGDATABASE: ${{secrets.PGDATABASE}}
+        PGPASSWORD: ${{secrets.PGPASSWORD}}
+      run: |
+        psql -f ${{github.workspace}}/results/upload.sql
