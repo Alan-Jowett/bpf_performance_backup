@@ -110,7 +110,7 @@ jobs:
       run: mkdir -p ${{github.workspace}}/results
 
     - name: Tests - Ubuntu-22.04
-      if: inputs.platform == 'ubuntu-22.04'
+      if: inputs.platform == 'ubuntu-22.04' && inputs.option == 'none'
       working-directory: ${{github.workspace}}/build/bin
       run: |
         sudo ./bpf_performance_runner -i tests.yml -r | tee ${{github.workspace}}/results/jit-${{inputs.platform}}-${{env.BUILD_TYPE}}.csv
