@@ -162,7 +162,7 @@ jobs:
 
     - name: Post-process results
       run: |
-        python3 scripts/process_results.py --csv-directory ${{github.workspace}}/results --sql-script-file ${{github.workspace}}/results/upload.sql --commit_id ${{github.sha}} --build_type ${{env.BUILD_TYPE}} --platform ${{inputs.platform}} --commit_id ${{github.sha}}
+        python3 scripts/process_results.py --csv-directory ${{github.workspace}}/results --sql-script-file ${{github.workspace}}/results/upload.sql --commit_id ${{github.sha}} --platform ${{inputs.platform}}/${{env.BUILD_TYPE}} --commit_id ${{github.sha}}
 
     - name: Upload SQL script
       uses: actions/upload-artifact@v2
