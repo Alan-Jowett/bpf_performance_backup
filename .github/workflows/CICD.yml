@@ -31,7 +31,7 @@ jobs:
       matrix:
         configuration: [ 'Release', 'Debug' ]
         platform: [ 'ubuntu-22.04', 'windows-2019', 'windows-2022' ]
-        option: [ none, sanitizer, coverage ]
+        option: [ none, sanitizer, coverage, jit ]
         exclude:
           - platform: windows-2019
             option: sanitizer
@@ -41,6 +41,8 @@ jobs:
             option: sanitizer
           - platform: windows-2022
             option: coverage
+          - platform: ubuntu-22.04
+            option: jit
 
     uses: ./.github/workflows/Build.yml
     with:
@@ -75,7 +77,7 @@ jobs:
     - name: Download performance result artifacts
       uses: actions/download-artifact@v2
       with:
-        name: results-Release-${{matrix.platform}}
+        name: results-Release-${{matrix.platform}}-none
         path: results
 
     - name: Post-process results
