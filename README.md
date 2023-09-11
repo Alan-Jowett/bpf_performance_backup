@@ -79,3 +79,6 @@ On Windows (after installing eBPF for Windows MSI):
 cd build\bin\Debug
 .\bpf_performance_runner tests.yml
 ```
+
+## Performand dashboards
+<iframe src="http://alanjo-grafana.eastus.cloudapp.azure.com/d-solo/a15e85b4-1a8f-45e5-a205-6bc22f891cc6/bpf-performance-windows-2022?orgId=1&from=1693855091151&to=1694459891151&panelId=1" width="450" height="200" frameborder="0"></iframe>
